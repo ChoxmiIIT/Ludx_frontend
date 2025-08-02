@@ -7,13 +7,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
-    env:
-      AWS_REGION: us-east-2
-      CLUSTER_NAME: cmm707-cluster
-      ECR_REGISTRY: 734842486567.dkr.ecr.us-east-2.amazonaws.com
-      IMAGE_NAME: cmm707/frontend
-
     steps:
       - uses: actions/checkout@v3
 
@@ -22,49 +15,20 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: us-east-2
 
       - name: Login to Amazon ECR
-        run: |
-          aws ecr get-login-password --region $AWS_REGION | \
-            docker login --username AWS --password-stdin $ECR_REGISTRY
+        run: aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 734842486567.dkr.ecr.us-east-2.amazonaws.com
 
       - name: Build and push Docker image
         run: |
-          docker build -t $ECR_REGISTRY/$IMAGE_NAME:latest .
-          docker push $ECR_REGISTRY/$IMAGE_NAME:latest
+          docker build -t 734842486567.dkr.ecr.us-east-2.amazonaws.com/cmm707/frontend:latest .
+          docker push 734842486567.dkr.ecr.us-east-2.amazonaws.com/cmm707/frontend:latest
 
-      - name: Generate static kubeconfig
-        run: |
-          ENDPOINT=$(aws eks describe-cluster --name $CLUSTER_NAME \
-            --region $AWS_REGION --query "cluster.endpoint" --output text)
-
-          TOKEN=$(aws eks get-token --cluster-name $CLUSTER_NAME \
-            --region $AWS_REGION --query "status.token" --output text)
-
-          mkdir -p ~/.kube
-
-          cat <<EOF > ~/.kube/config
-          apiVersion: v1
-          kind: Config
-          clusters:
-          - cluster:
-              server: $ENDPOINT
-              insecure-skip-tls-verify: true
-            name: eks
-          users:
-          - name: eks-user
-            user:
-              token: $TOKEN
-          contexts:
-          - context:
-              cluster: eks
-              user: eks-user
-            name: eks-context
-          current-context: eks-context
-          EOF
+      - name: Update kubeconfig
+        run: aws eks --region us-east-2 update-kubeconfig --name cmm707-cluster
 
       - name: Deploy to EKS
         run: |
-          kubectl apply --validate=false -f k8s/frontend-service.yaml
-          kubectl apply --validate=false -f k8s/frontend-deployment.yaml
+          kubectl apply -f k8s/frontend-service.yaml
+          kubectl apply -f k8s/frontend-deployment.yaml
