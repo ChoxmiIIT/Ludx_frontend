@@ -22,8 +22,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t 734842486567.dkr.ecr.us-east-2.amazonaws.com/frontend:latest .
-          docker push 734842486567.dkr.ecr.us-east-2.amazonaws.com/frontend:latest
+          docker build -t cmm707/coursework:latest .
+          docker push 734842486567.dkr.ecr.us-east-2.amazonaws.com/cmm707/coursework:latest
 
       - name: Update kubeconfig
         run: aws eks --region us-east-2 update-kubeconfig --name my-cluster
