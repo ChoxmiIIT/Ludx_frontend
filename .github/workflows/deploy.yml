@@ -27,9 +27,34 @@ jobs:
 
       - name: Update kubeconfig
         run: aws eks --region us-east-2 update-kubeconfig --name cmm707-cluster
-
-      - name: Deploy to EKS
-        run: |
-          aws sts get-caller-identity
-          kubectl apply -f k8s/frontend-service.yaml
-          kubectl apply -f k8s/frontend-deployment.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    matchLabels:
+      app: frontend-service
+  template:
+    metadata:
+      labels:
+        app: frontend-service
+    spec:
+      containers:
+      - name: frontend
+        image: 734842486567.dkr.ecr.us-east-2.amazonaws.com/cmm707/frontend:latest
+        ports:
+        - containerPort: 80
