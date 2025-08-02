@@ -28,6 +28,8 @@ jobs:
       - name: Deploy to EKS
         run: |
           aws eks --region us-east-2 update-kubeconfig --name cmm707-cluster
+          aws sts get-caller-identity
+          kubectl get svc
           kubectl get nodes
           kubectl config view
           kubectl config view --minify
