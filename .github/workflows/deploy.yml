@@ -30,5 +30,6 @@ jobs:
 
       - name: Deploy to EKS
         run: |
+          aws sts get-caller-identity
           kubectl apply -f k8s/frontend-service.yaml
           kubectl apply -f k8s/frontend-deployment.yaml
