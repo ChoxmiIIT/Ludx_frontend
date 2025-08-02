@@ -13,6 +13,6 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: 734842486567.dkr.ecr.us-east-2.amazonaws.com/ludx-frontend:latest
+        image: 734842486567.dkr.ecr.us-east-2.amazonaws.com/cmm707/frontend:latest
         ports:
         - containerPort: 80
