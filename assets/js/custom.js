@@ -102,7 +102,38 @@
 			}, 300);
 		});
 	});
-    
+	
+	let analytics = {
+	    page_views: 1,
+	    clicks: 0,
+	    scroll_depth: 0,
+	    page_time: 0,
+	    session_time: 0
+	};
+	let startTime = Date.now();
+	let maxScroll = 0;
 
+	document.addEventListener('click', function() {
+	    analytics.clicks++;
+	});
+
+	document.addEventListener('scroll', function() {
+	    let scrolled = window.scrollY + window.innerHeight;
+	    if (scrolled > maxScroll) {
+	        maxScroll = scrolled;
+	        analytics.scroll_depth = Math.floor((maxScroll / document.body.scrollHeight) * 100);
+	    }
+	});
+
+	window.addEventListener('beforeunload', function() {
+	    let now = Date.now();
+	    analytics.page_time = Math.round((now - startTime) / 1000);
+	    analytics.session_time = analytics.page_time;
+	    fetch('http://analytics-service:5000/analytics', {
+	        method: 'POST',
+	        headers: { 'Content-Type': 'application/json' },
+	        body: JSON.stringify(analytics)
+	    });
+	});
 
 })(window.jQuery);
