@@ -30,5 +30,8 @@ jobs:
 
       - name: Deploy to EKS
         run: |
+          kubectl get nodes
+          kubectl config view
+          kubectl config view --minify
           kubectl apply -f k8s/frontend-service.yaml --validate=false
           kubectl apply -f k8s/frontend-deployment.yaml --validate=false
