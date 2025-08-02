@@ -33,5 +33,5 @@ jobs:
           kubectl get nodes
           kubectl config view
           kubectl config view --minify
-          kubectl apply -f k8s/frontend-service.yaml --validate=false
-          kubectl apply -f k8s/frontend-deployment.yaml --validate=false
+          kubectl apply -f k8s/frontend-service.yaml --v=8
+          kubectl apply -f k8s/frontend-deployment.yaml --v=8
