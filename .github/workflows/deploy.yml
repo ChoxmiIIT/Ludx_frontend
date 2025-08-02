@@ -25,19 +25,8 @@ jobs:
           docker build -t 734842486567.dkr.ecr.us-east-2.amazonaws.com/cmm707/frontend:latest .
           docker push 734842486567.dkr.ecr.us-east-2.amazonaws.com/cmm707/frontend:latest
 
-      - name: Get cluster endpoint
-        id: cluster
-        run: |
-          echo "ENDPOINT=$(aws eks describe-cluster --name cmm707-cluster --query "cluster.endpoint" --output text)" >> $GITHUB_ENV
-
-      - name: Get token and configure kubeconfig
-        run: |
-          export KUBE_TOKEN=$(aws eks get-token --cluster-name cmm707-cluster --region us-east-2 --query "status.token" --output text)
-
-          kubectl config set-cluster cmm707-cluster --server=${ENDPOINT} --insecure-skip-tls-verify=true
-          kubectl config set-credentials ci-user --token="$KUBE_TOKEN"
-          kubectl config set-context ci-context --cluster=cmm707-cluster --user=ci-user
-          kubectl config use-context ci-context
+      - name: Update kubeconfig
+        run: aws eks --region us-east-2 update-kubeconfig --name cmm707-cluster
 
       - name: Deploy to EKS
         run: |
