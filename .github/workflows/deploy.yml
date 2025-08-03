@@ -30,11 +30,7 @@ jobs:
 
       - name: Debug AWS and kubectl setup
         run: |
-          echo "Debugging AWS and kubectl setup"
-          aws sts get-caller-identity
-          aws eks describe-cluster --name cmm707-cluster --region us-east-2
-          kubectl config view
-          kubectl config current-context
+          kubectl auth whoami
 
       - name: Deploy to EKS
         run: |
