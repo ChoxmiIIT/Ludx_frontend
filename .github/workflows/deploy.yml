@@ -25,6 +25,12 @@ jobs:
           docker build -t 734842486567.dkr.ecr.us-east-2.amazonaws.com/cmm707/frontend:latest .
           docker push 734842486567.dkr.ecr.us-east-2.amazonaws.com/cmm707/frontend:latest
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::734842486567:role/GitHubActionsRoleCMM707
+          aws-region: us-west-2
+
       - name: Update kubeconfig
         run:  aws eks --region us-east-2 update-kubeconfig --name cmm707-cluster
 
