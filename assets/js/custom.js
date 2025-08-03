@@ -129,7 +129,7 @@
 	    let now = Date.now();
 	    analytics.page_time = Math.round((now - startTime) / 1000);
 	    analytics.session_time = analytics.page_time;
-	    fetch('http://analytics-service:5000/analytics', {
+	    fetch('/analytics/analytics', {
 	        method: 'POST',
 	        headers: { 'Content-Type': 'application/json' },
 	        body: JSON.stringify(analytics)
