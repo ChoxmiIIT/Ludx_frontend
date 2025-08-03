@@ -134,6 +134,21 @@
 	        headers: { 'Content-Type': 'application/json' },
 	        body: JSON.stringify(analytics)
 	    });
+		fetch('/analytics', {
+	        method: 'GET',
+	        headers: { 'Content-Type': 'application/json' },
+	        body: JSON.stringify(analytics)
+	    });
+		fetch('/game-data', {
+	        method: 'GET',
+	        headers: { 'Content-Type': 'application/json' },
+	        body: JSON.stringify(analytics)
+	    });
+		fetch('/order', {
+	        method: 'GET',
+	        headers: { 'Content-Type': 'application/json' },
+	        body: JSON.stringify(analytics)
+	    });
 	});
 
 })(window.jQuery);
