@@ -1,5 +1,5 @@
 
-# 🛠️ AWS EKS & ECR Setup Runbook
+# 🛠️ Lugx gaming solution runbook
 
 ## Prerequisites
 - OS: Linux/macOS/Windows
