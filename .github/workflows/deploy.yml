@@ -26,13 +26,13 @@ jobs:
           docker push 734842486567.dkr.ecr.us-east-2.amazonaws.com/cmm707/frontend:latest
 
       - name: Update kubeconfig
-        run:  aws eks --region us-east-2 update-kubeconfig --name lugx-gaming-cluster
+        run:  aws eks --region us-east-2 update-kubeconfig --name lugx-gaming
 
       - name: Debug AWS and kubectl setup
         run: |
           echo "Debugging AWS and kubectl setup"
           aws sts get-caller-identity
-          aws eks describe-cluster --name lugx-gaming-cluster --region us-east-2
+          aws eks describe-cluster --name lugx-gaming --region us-east-2
           kubectl config view
           kubectl config current-context
 

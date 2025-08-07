@@ -95,6 +95,79 @@ aws eks create-cluster   --name my-cluster   --region us-west-2   --role-arn arn
 
 2. Wait for the cluster status to become `ACTIVE`.
 
+3. Check openID provider exist for the cluster
+```bash
+aws eks describe-cluster --name <cluster_name> --query "cluster.identity.oidc.issuer" --output text
+```
+
+4. Confirm OpenID provider is configured. Following command should output an ARN.
+```bash
+aws iam list-open-id-connect-providers | grep <openid_provider_id>
+```
+
+5. If OICD provider is not configured, associate IAM OICD provider to the cluster
+```bash
+eksctl utils associate-iam-oidc-provider --cluster <cluster_name> --approve
+```
+
+6. Confirm OpenID provider is configure. This is important for Volume provisioning.
+
+7. Create IAM trust_policy file
+```bash
+cat <<EOF > trust-policy.json 
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::<aws_account_id>:oidc-provider/oidc.eks.us-east-2.amazonaws.com/id/<openid_provider_id>"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "oidc.eks.us-east-2.amazonaws.com/id/<openid_provider_id>:aud": "sts.amazonaws.com",
+          "oidc.eks.us-east-2.amazonaws.com/id/<openid_provider_id>:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+        }
+      }
+    }
+  ]
+}
+EOF
+```
+
+8. Use the created trust-policy.json to create a role
+
+```bash
+aws iam create-role \
+> --role-name AmazonEKS_EBS_CSI_DriverRole \
+> --assume-role-policy-document file://"trust-policy.json"
+```
+
+9. Attach EBS CSID policy to the role
+```bash
+aws iam attach-role-policy \
+>  --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
+>  --role-name AmazonEKS_EBS_CSI_DriverRole
+```
+
+9. Create EBS CSID addon
+```bash
+aws eks create-addon \
+> --addon-name aws-ebs-csi-driver \
+> --service-account-role-arn arn:aws:iam::<aws_account_id>:role/AmazonEKS_EBS_CSI_DriverRole \
+> --cluster-name <cluster_name>
+```
+
+10. Update kubeconfig
+```bash
+aws eks update-kubeconfig --region <region-code> --name <cluster-name>
+```
+
+11. Create nodegroup if it doesn't exist
+```bash
+
+
 ---
 
 ## 6. 🐳 Create an ECR Repository
