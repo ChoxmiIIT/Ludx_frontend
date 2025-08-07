@@ -38,8 +38,5 @@ jobs:
 
       - name: Deploy to EKS
         run: |
-          aws sts get-caller-identity
-          kubectl get svc
-          kubectl get configmap aws-auth -n kube-system -o yaml
           kubectl apply -f k8s/frontend-service.yaml
           kubectl apply -f k8s/frontend-deployment.yaml
