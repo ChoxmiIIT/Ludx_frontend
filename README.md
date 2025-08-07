@@ -167,7 +167,7 @@ aws eks update-kubeconfig --region <region-code> --name <cluster-name>
 11. Create nodegroup if it doesn't exist
 ```bash
 
-
+```
 ---
 
 ## 6. 🐳 Create an ECR Repository
