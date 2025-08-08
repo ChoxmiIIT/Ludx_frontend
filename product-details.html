@@ -245,7 +245,8 @@ https://templatemo.com/tm-589-lugx-gaming
   <script>
     document.getElementById("qty").addEventListener("submit", function (e) {
       e.preventDefault();
-
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
       const quantity = document.getElementById("quantity").value;
       const productId = urlParams.get("id");
 
