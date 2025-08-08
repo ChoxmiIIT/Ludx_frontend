@@ -143,7 +143,7 @@ https://templatemo.com/tm-589-lugx-gaming
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         
         const data = await res.json();
-        const items = Array.isArray(data.items) ? data.items : [];
+        const items = Array.isArray(data) ? data : [];
 
         console.log('Loaded products:', items);
 
@@ -153,18 +153,18 @@ https://templatemo.com/tm-589-lugx-gaming
             <div class="col-lg-3 col-md-6 align-self-center mb-30 trending-items ${filters}">
               <div class="item">
                 <div class="thumb">
-                  <a href="${p.productUrl || '#'}">
-                    <img src="${p.imageUrl}" alt="${p.title}">
+                  <a href="${p.image_url || '#'}">
+                    <img src="${p.image_url}" alt="${p.name}">
                   </a>
                   <span class="price">
-                    ${p.originalPrice ? `<em>$${p.originalPrice}</em>` : ''}
+                    ${p.price ? `<em>$${p.price}</em>` : ''}
                     $${p.price}
                   </span>
                 </div>
                 <div class="down-content">
                   <span class="category">${p.category || ''}</span>
-                  <h4>${p.title || ''}</h4>
-                  <a href="${p.productUrl || '#'}"><i class="fa fa-shopping-bag"></i></a>
+                  <h4>${p.name || ''}</h4>
+                  <a href="/product-details.html?id=${p.id}"><i class="fa fa-shopping-bag"></i></a>
                 </div>
               </div>
             </div>
