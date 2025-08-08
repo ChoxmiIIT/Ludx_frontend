@@ -312,6 +312,45 @@ kubectl get ingress app-ingress
 
 Use the `ADDRESS` or `HOSTS` value as your application endpoint.
 
+#### Troubleshoot:
+If `ADDRESS` is not appearing
+1. Create IAM Policy
+```bash
+curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/main/docs/install/iam_policy.json
+
+aws iam create-policy \
+  --policy-name AWSLoadBalancerControllerIAMPolicy \
+  --policy-document file://iam-policy.json
+```
+
+2. Create IAM Role for service account
+```bash
+eksctl create iamserviceaccount \
+  --cluster <cluster-name> \
+  --namespace kube-system \
+  --name aws-load-balancer-controller \
+  --attach-policy-arn arn:aws:iam::<account-id>:policy/AWSLoadBalancerControllerIAMPolicy \
+  --approve
+```
+
+3. Install the controller using Helm
+```bash
+helm repo add eks https://aws.github.io/eks-charts
+helm repo update
+
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=<cluster-name> \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller \
+  --set region=<aws-region>
+```
+
+4. Verify controller status
+```bash
+kubectl get deployment aws-load-balancer-controller -n kube-system
+```
+
 ---
 
 ### 14. 🔐 Allow ClickHouse Access
@@ -322,7 +361,7 @@ After applying `clickhouse-service.yaml`:
    ```bash
    kubectl get svc
    ```
-2. Copy the hostname under `EXTERNAL-IP` for `clickhouse-service`.
+2. Copy the hostname under `EXTERNAL-IP` for `clickhouse-analytics`.
 
 3. Go to AWS EC2 → Security Groups → Edit inbound rules:
    - Add rules for ports:
